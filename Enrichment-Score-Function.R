@@ -1,4 +1,4 @@
-# random zahlen erstellen
+# Random zahlen erstellen
 
 zahlen.rand <- matrix(abs(round(rnorm(2000, 4, 3), 2)), ncol=20, byrow=T)
 zahlen.obs <- matrix(abs(round(rnorm(20, 4, 3), 2)), ncol=20, byrow=T)

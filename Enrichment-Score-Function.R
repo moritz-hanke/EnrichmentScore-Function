@@ -1,7 +1,7 @@
 # Random zahlen erstellen
 
-zahlen.rand <- matrix(abs(round(rnorm(2000, 4, 3), 2)), ncol=20, byrow=T)
-zahlen.obs <- matrix(abs(round(rnorm(20, 4, 3), 2)), ncol=20, byrow=T)
+zahlen.rand <- matrix(abs(round(rchisq(2000, 2), 2)), ncol=20, byrow=T)
+zahlen.obs <- matrix(abs(round(rchisq(20, 2), 2)), ncol=20, byrow=T)
 colnames(zahlen.rand) <- letters[1:20]
 colnames(zahlen.obs) <- letters[1:20]
 
@@ -31,8 +31,10 @@ ES <- function(var, set, daten){   # wichtig: spalten müssen SNPs sein, Zeilen 
   N_r <- sum(var[names(var) %in% set]) # summe der hits eines Sets
   
   Hits <- rep(0, length(temp)) 
-  Hits[seq_along(var)[names(sort(var, decreasing=T)) %in% set]] <- sort(var[names(var) %in% set], decreasing=T)# Vektor,der nur 0 und an den passenden sortierten Positionen die Werte von einem Set enthält
-  Hits <- Hits/N_r
+  Hits[seq_along(var)[names(sort(var, decreasing=T)) %in% set]] <- ### Vektor,der nur 0 und an den passenden
+    sort(var[names(var) %in% set], decreasing=T)                     # sortierten Positionen die Werte von 
+                                                                     # einem Set enthält 
+  Hits <- Hits/N_r                                                  
   
   Miss <- rep( 1/(N-N_h), N)
   Miss[seq_along(var)[names(sort(var, decreasing=T)) %in% set]] <- 0

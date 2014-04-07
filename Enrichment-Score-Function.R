@@ -1,25 +1,17 @@
 # Random zahlen erstellen
 
-zahlen.rand <- matrix(abs(round(rchisq(2000, 2), 2)), ncol=20, byrow=T)
-zahlen.obs <- matrix(abs(round(rchisq(20, 2), 2)), ncol=20, byrow=T)
+zahlen.rand <- matrix(abs(round(rchisq(2000, 2,2), 2)), ncol=20, byrow=T)
+zahlen.obs <- matrix(abs(round(rchisq(20, 2,2), 2)), ncol=20, byrow=T)
 colnames(zahlen.rand) <- letters[1:20]
 colnames(zahlen.obs) <- letters[1:20]
 
 zahlen.obs.manipuliert <- zahlen.obs
-zahlen.obs.manipuliert[1,14:19] <- c(0.03,0.01,0.03,0.07,0.01,0.02)
+zahlen.obs.manipuliert[,14:20] <- c(0.03,0.01,0.03,0.07,0.01,0.02, 0.01)
 colnames(zahlen.obs.manipuliert) <- letters[1:20]
 set1 <- letters[c(1:4, 6)]
 set2 <- letters[c(5,7:13)]
 set3 <- letters[14:20]
 
-# Frage: kann es eigentlich, wenn man Chi^2 Werte nimmt, eine Ansammlung am Ende geben?
-#Ich meine ja, wenn sie alle sehr klein sind. Das Problem dabei ist, dass das dann ja
-# eigentlich sehr hohen P-Werten entspricht und folglich würde man nicht von einer
-# Assoziation ausgehen
-# können sich aber logisch die werte nur an einer seite (oben, weil große werte) sammeln,
-# stören sie sich so ggf in ihrem signal: bspw. wäre als genexpression eine starke positive
-# und eine starke negative korrelation zwischen zwei pathways und dem phaenotypen zu sehen,
-# aber durch den chi^2 sind es nur noch starke "positive" "korrelationen"
 
 ES <- function(var, set, daten){   # wichtig: spalten müssen SNPs sein, Zeilen die beobachteten
                                                     # bzw. permutierten teststatistiken

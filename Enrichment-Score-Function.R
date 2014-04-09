@@ -35,9 +35,7 @@ ES <- function(var, set, daten){   # wichtig: spalten müssen SNPs sein, Zeilen 
   Pmiss <- cumsum(Miss)
   
   ES <- Phit - Pmiss
-  ES
-  #ES_max <- max(ES)
-  #ES_max
+  ES_max <-max(ES)
   
 }
 

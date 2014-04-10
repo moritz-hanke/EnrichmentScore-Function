@@ -8,6 +8,8 @@ colnames(zahlen.obs) <- letters[1:20]
 zahlen.obs.manipuliert <- zahlen.obs
 zahlen.obs.manipuliert[,14:20] <- c(0.03,0.01,0.03,0.07,0.01,0.02, 0.01)
 colnames(zahlen.obs.manipuliert) <- letters[1:20]
+
+### Sets sind in diesem Fallnicht ein Gen sondern ein Pathway, der SNPs enthält
 set1 <- letters[c(1:4, 6)]
 set2 <- letters[c(5,7:13)]
 set3 <- letters[14:20]
@@ -57,4 +59,3 @@ rand <- apply(zahlen.rand, MARGIN=1, ES, set=set3, daten=zahlen.rand)
 
 
 
-names(zahlen.rand[4,5])

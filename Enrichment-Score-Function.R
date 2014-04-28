@@ -1,15 +1,7 @@
-# Random zahlen erstellen
-zahlen.rand <- matrix(rchisq(2000, 2,2), ncol=20, byrow=T)
-zahlen.obs <- matrix(rchisq(20, 2,2), ncol=20, byrow=T)
-colnames(zahlen.rand) <- letters[1:20]
-colnames(zahlen.obs) <- letters[1:20]
-
-zahlen.obs.manipuliert <- zahlen.obs
-zahlen.obs.manipuliert[,14:20] <- c(0.03,0.01,0.03,0.07,0.01,0.02, 0.01)
-colnames(zahlen.obs.manipuliert) <- letters[1:20]
-
-# Random p-Werte erstellen
+# Random p-Werte eines Chi^2-Verteilung erstellen
+set.seed(123)
 p.zahlen.rand <- matrix(pchisq(rchisq(2000, 2,2), df=2, ncp=2), ncol=20, byrow=T)
+set.seed(321)
 p.zahlen.obs <- matrix(pchisq(rchisq(20, 2,2), df=2, ncp=2), ncol=20, byrow=T)
 colnames(p.zahlen.rand) <- letters[1:20]
 colnames(p.zahlen.obs) <- letters[1:20]
@@ -24,16 +16,6 @@ colnames(p.zahlen.obs.manipuliert) <- letters[1:20]
 set1 <- letters[c(1:4, 6)]
 set2 <- letters[c(5,7:13)]
 set3 <- letters[14:20]
-
-
-####################
-### QUANTILFUNKTION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-####################
-### QUANTILFUNKTION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-####################
-### QUANTILFUNKTION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-####################
-### QUANTILFUNKTION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 
@@ -52,7 +34,7 @@ ES <- function(variables, set, daten){   # wichtig: spalten müssen SNPs sein, Z
   Hits <- rep(0, length(temp)) 
   Hits[seq_along(temp)[names(temp) %in% set]] <- ### Vektor,der nur 0 und an den passenden
     abs(temp[names(temp) %in% set])                # sortierten Positionen die Werte von 
-  # einem Set enthält 
+                                                   # einem Set enthält 
   Hits <- Hits/N_r        ### mit N_r normierten sortierten Werte
   
   Miss <- rep( 1/(N-N_h), N)  ### Gegenstrück zu Hits; alle Einträge die != 0 sind gleich
@@ -77,9 +59,12 @@ ES <- function(variables, set, daten){   # wichtig: spalten müssen SNPs sein, Z
 
 
 # für set3
-obs.manipuliert <- apply(p.zahlen.obs.manipuliert, MARGIN=1, ES, set=set1, daten=p.zahlen.obs.manipuliert) #wichtig:
+obs.manipuliert1 <- apply(p.zahlen.obs.manipuliert, MARGIN=1, ES, set=set1, daten=p.zahlen.obs.manipuliert) #wichtig:
                                                                 # X von apply muss daten entsprechen und
                                                                 # MARGIN =1 sein
+obs.manipuliert2 <- apply(p.zahlen.obs.manipuliert, MARGIN=1, ES, set=set2, daten=p.zahlen.obs.manipuliert)
+obs.manipuliert3 <- apply(p.zahlen.obs.manipuliert, MARGIN=1, ES, set=set3, daten=p.zahlen.obs.manipuliert)
+
 
 obs1 <- apply(p.zahlen.obs, MARGIN=1, FUN=ES, set=set1, daten=p.zahlen.obs)
 obs2 <- apply(p.zahlen.obs, MARGIN=1, FUN=ES, set=set2, daten=p.zahlen.obs)
@@ -96,17 +81,9 @@ sum((obs < rand1)/length(rand1))    ### alle rand sind gleich lang -> Anzahl Per
 sum((obs < rand2)/length(rand2))
 sum((obs < rand3)/length(rand3))
 
-NES.obs1 <- obs/mean(rand1)
-NES.obs2 <- obs/mean(rand2)
-NES.obs3 <- obs/mean(rand3)
-NES.rand1 <- rand1/mean(rand1)
-NES.rand2 <- rand2/mean(rand2)
-NES.rand3 <- rand3/mean(rand3)
+sum((obs.manipuliert1 < rand1)/length(rand1))
+sum((obs.manipuliert2 < rand2)/length(rand2))
+sum((obs.manipuliert3 < rand3)/length(rand3))
 
-hist(rand)
 
-sum(NES.obs1 < NES.rand1)/length(NES.rand1)       ### kleiner < weil man den Anteil wissen will,
-                                                   # der durch den Zufall einen größeren ES hat
-sum(NES.obs2 < NES.rand2)/length(NES.rand2)
-sum(NES.obs3 < NES.rand3)/length(NES.rand3)
 

@@ -158,9 +158,3 @@ ES <- function(data.obs, data.perm, sets){
 
 ES(data.obs=p.zahlen.obs, data.perm=p.zahlen.rand, Sets)
 
-
-
-
-
-
-

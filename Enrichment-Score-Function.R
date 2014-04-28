@@ -19,11 +19,16 @@ set3 <- letters[14:20]
 
 
 
-max_ES <- function(set, variables, daten){   # wichtig: spalten müssen SNPs sein, Zeilen die beobachteten
-                                                    # bzw. permutierten teststatistiken
+max_ES <- function(set, variables, daten){   ### WICHTIG: Spalten müssen SNPs sein, Zeilen die
+                                               # beobachteten bzw. permutierten Teststatistiken
+  
+  if((max(daten) > 1) | (min(daten) < 0)){
+    stop("Are you realy using p-values? Values don't lie between 0 and 1")
+  }
+  
   temp <- qnorm(1-variables)            ### z-Scores der p-werte mittels Quantilfunktion der SNV
   namen <- names(variables)[order(temp, decreasing=T)] ### namen der nachfolgend sortierten
-  # z-Scores
+                                                         # z-Scores
   temp <- sort(temp, decreasing=T)  ### Sortierung der z-Scores
   names(temp) <- namen                # Namesgebung der z-Scores
   
@@ -118,7 +123,8 @@ ES <- function(data.obs, data.perm, sets){
   
   maxES.obs <- rep(NA, length(sets))    ### Erstellen von Objekten, die die maxEX der
   names(maxES.obs) <- sets                # beobachteten und permutierten Daten enthalten
-  maxES.perm <- vector(mode="list", length=length(sets))  # sollen
+                                          # sollen
+  maxES.perm <- vector(mode="list", length=length(sets))  
   names(maxES.perm) <- sets
   
   maxES.obs <- sapply(sets, FUN=function(x){   ### für alle Sets/PW soll Max_ES bei den
@@ -141,12 +147,14 @@ ES <- function(data.obs, data.perm, sets){
   
   nperm <- length(data.perm[,1]) ### wieviele Permutationen gab es? fuer normierten P-Wert
   
-  nom_P <- sapply(colnames(maxES.perm), FUN=function(X){
+  nom_P <- sapply(colnames(maxES.perm), FUN=function(X){ ### Berechnung des Normierten
+                                                           # P-Werts
     (sum(maxES.obs[X] < maxES.perm[,X]))/nperm
   })
-  nom_P
+  nom_P  ### Rueckgabe der normierten P-Werte
   
 }
+
 
 ES(data.obs=p.zahlen.obs, data.perm=p.zahlen.rand, Sets)
 

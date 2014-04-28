@@ -85,5 +85,9 @@ sum((obs.manipuliert1 < rand1)/length(rand1))
 sum((obs.manipuliert2 < rand2)/length(rand2))
 sum((obs.manipuliert3 < rand3)/length(rand3))
 
+####################
+### 2DO:
+# - Normierung für Set/PW-Groesse
+# - eine Zusammenfassende Funktion bauen
 
 

@@ -77,9 +77,9 @@ rand3 <- apply(p.zahlen.rand, MARGIN=1, max_ES, set=set3, daten=p.zahlen.rand)
 plot()
 
 
-sum((obs < rand1)/length(rand1))    ### alle rand sind gleich lang -> Anzahl Permutationen
-sum((obs < rand2)/length(rand2))
-sum((obs < rand3)/length(rand3))
+sum((obs1 < rand1))/length(rand1)    ### alle rand sind gleich lang -> Anzahl Permutationen
+sum((obs2 < rand2)/length(rand2))
+sum((obs3 < rand3)/length(rand3))
 
 sum((obs.manipuliert1 < rand1)/length(rand1))
 sum((obs.manipuliert2 < rand2)/length(rand2))
@@ -91,9 +91,14 @@ sum((obs.manipuliert3 < rand3)/length(rand3))
 # - eine Zusammenfassende Funktion bauen
 
 Sets <- list(set1,set2,set3)
+names(Sets) <- unlist(strsplit("set1,set2,set3", ","))
+
 
 ES <- function(data.obs, data.perm, sets){
   ### Fehler abfangen
+  if(is.null(names(Sets))){
+    stop("List which contains the Pathways/Sets should have a name for each element")
+  }
   if(is.data.frame(data.obs) | is.matrix(data.obs) != TRUE){      
     stop("data.obs must be dataframe or matrix")
   }
@@ -111,35 +116,43 @@ ES <- function(data.obs, data.perm, sets){
   }
   ### Fehler abfangen Ende
   
-  maxES.obs <- rep(NA, length(sets))
-  names(maxES.obs) <- sets
-  maxES.perm <- vector(mode="list", length=length(sets))
+  maxES.obs <- rep(NA, length(sets))    ### Erstellen von Objekten, die die maxEX der
+  names(maxES.obs) <- sets                # beobachteten und permutierten Daten enthalten
+  maxES.perm <- vector(mode="list", length=length(sets))  # sollen
   names(maxES.perm) <- sets
   
-  maxES.obs <- sapply(sets, FUN=function(x){
+  maxES.obs <- sapply(sets, FUN=function(x){   ### für alle Sets/PW soll Max_ES bei den
+                                                 # beobachteten Daten angewedet werden
     apply(data.obs, MARGIN=1, FUN=max_ES, set=x, daten=data.obs)
   }
   )
-  maxES.obs
+  
+  maxES.perm <- sapply(sets, FUN=function(x){   ### für alle Sets/PW soll Max_ES bei den
+                                                  # permutierten Daten angewedet werden
+    apply(data.perm, MARGIN=1, FUN=max_ES, set=x, daten=data.perm)
+  }
+  )
+  
+  #########################################
+  #########################################
+  ### MUss hier noch eine Normierung rein? 
+  #########################################
+  #########################################
+  
+  nperm <- length(data.perm[,1]) ### wieviele Permutationen gab es? fuer normierten P-Wert
+  
+  nom_P <- sapply(colnames(maxES.perm), FUN=function(X){
+    (sum(maxES.obs[X] < maxES.perm[,X]))/nperm
+  })
+  nom_P
+  
 }
 
+ES(data.obs=p.zahlen.obs, data.perm=p.zahlen.rand, Sets)
 
 
-data.obs <- p.zahlen.obs
-data.perm <- p.zahlen.rand
-obs1 <- apply(p.zahlen.obs, MARGIN=1, FUN=max_ES, set=set1, daten=p.zahlen.obs)
 
-sapply(Sets, FUN=function(x){
-  apply(data.perm, MARGIN=1, FUN=max_ES, set=x, daten=data.perm)
-}
-)
 
-max_ES(set1, daten=p.zahlen.obs.manipuliert, variables=p.zahlen.obs.manipuliert)
 
-a <- c(1,2,3)
-b <- c(1,2,3,4)
 
-d <- list(a,b)
-sapply(d, mean)
-str(Sets[[1]])
-str(set1)
+

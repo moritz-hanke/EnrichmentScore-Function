@@ -19,7 +19,7 @@ set3 <- letters[14:20]
 
 
 
-ES <- function(variables, set, daten){   # wichtig: spalten müssen SNPs sein, Zeilen die beobachteten
+max_ES <- function(set, variables, daten){   # wichtig: spalten müssen SNPs sein, Zeilen die beobachteten
                                                     # bzw. permutierten teststatistiken
   temp <- qnorm(1-variables)            ### z-Scores der p-werte mittels Quantilfunktion der SNV
   namen <- names(variables)[order(temp, decreasing=T)] ### namen der nachfolgend sortierten
@@ -59,20 +59,20 @@ ES <- function(variables, set, daten){   # wichtig: spalten müssen SNPs sein, Z
 
 
 # für set3
-obs.manipuliert1 <- apply(p.zahlen.obs.manipuliert, MARGIN=1, ES, set=set1, daten=p.zahlen.obs.manipuliert) #wichtig:
+obs.manipuliert1 <- apply(p.zahlen.obs.manipuliert, MARGIN=1, max_ES, set=set1, daten=p.zahlen.obs.manipuliert) #wichtig:
                                                                 # X von apply muss daten entsprechen und
                                                                 # MARGIN =1 sein
-obs.manipuliert2 <- apply(p.zahlen.obs.manipuliert, MARGIN=1, ES, set=set2, daten=p.zahlen.obs.manipuliert)
-obs.manipuliert3 <- apply(p.zahlen.obs.manipuliert, MARGIN=1, ES, set=set3, daten=p.zahlen.obs.manipuliert)
+obs.manipuliert2 <- apply(p.zahlen.obs.manipuliert, MARGIN=1, max_ES, set=set2, daten=p.zahlen.obs.manipuliert)
+obs.manipuliert3 <- apply(p.zahlen.obs.manipuliert, MARGIN=1, max_ES, set=set3, daten=p.zahlen.obs.manipuliert)
 
 
-obs1 <- apply(p.zahlen.obs, MARGIN=1, FUN=ES, set=set1, daten=p.zahlen.obs)
-obs2 <- apply(p.zahlen.obs, MARGIN=1, FUN=ES, set=set2, daten=p.zahlen.obs)
-obs3 <- apply(p.zahlen.obs, MARGIN=1, FUN=ES, set=set3, daten=p.zahlen.obs)
+obs1 <- apply(p.zahlen.obs, MARGIN=1, FUN=max_ES, set=set1, daten=p.zahlen.obs)
+obs2 <- apply(p.zahlen.obs, MARGIN=1, FUN=max_ES, set=set2, daten=p.zahlen.obs)
+obs3 <- apply(p.zahlen.obs, MARGIN=1, FUN=max_ES, set=set3, daten=p.zahlen.obs)
 
-rand1 <- apply(p.zahlen.rand, MARGIN=1, ES, set=set1, daten=p.zahlen.rand)
-rand2 <- apply(p.zahlen.rand, MARGIN=1, ES, set=set2, daten=p.zahlen.rand)
-rand3 <- apply(p.zahlen.rand, MARGIN=1, ES, set=set3, daten=p.zahlen.rand)
+rand1 <- apply(p.zahlen.rand, MARGIN=1, max_ES, set=set1, daten=p.zahlen.rand)
+rand2 <- apply(p.zahlen.rand, MARGIN=1, max_ES, set=set2, daten=p.zahlen.rand)
+rand3 <- apply(p.zahlen.rand, MARGIN=1, max_ES, set=set3, daten=p.zahlen.rand)
 
 plot()
 
@@ -90,4 +90,56 @@ sum((obs.manipuliert3 < rand3)/length(rand3))
 # - Normierung für Set/PW-Groesse
 # - eine Zusammenfassende Funktion bauen
 
+Sets <- list(set1,set2,set3)
 
+ES <- function(data.obs, data.perm, sets){
+  ### Fehler abfangen
+  if(is.data.frame(data.obs) | is.matrix(data.obs) != TRUE){      
+    stop("data.obs must be dataframe or matrix")
+  }
+  if(is.data.frame(data.perm) | is.matrix(data.perm) != TRUE){
+    stop("data.perm must be dataframe or matrix")
+  }
+  if(is.list(sets)!=TRUE){
+    stop("sets has to be a list")
+  }
+  if(length(ncol(data.obs))!=length(ncol(data.perm))){
+    stop("Length of data.ob and data.perm differ")
+  }
+  if(!all(sort(colnames(data.obs)) == sort(colnames(data.perm)))){
+    stop("data.obs and data.perm have different colnames")
+  }
+  ### Fehler abfangen Ende
+  
+  maxES.obs <- rep(NA, length(sets))
+  names(maxES.obs) <- sets
+  maxES.perm <- vector(mode="list", length=length(sets))
+  names(maxES.perm) <- sets
+  
+  maxES.obs <- sapply(sets, FUN=function(x){
+    apply(data.obs, MARGIN=1, FUN=max_ES, set=x, daten=data.obs)
+  }
+  )
+  maxES.obs
+}
+
+
+
+data.obs <- p.zahlen.obs
+data.perm <- p.zahlen.rand
+obs1 <- apply(p.zahlen.obs, MARGIN=1, FUN=max_ES, set=set1, daten=p.zahlen.obs)
+
+sapply(Sets, FUN=function(x){
+  apply(data.perm, MARGIN=1, FUN=max_ES, set=x, daten=data.perm)
+}
+)
+
+max_ES(set1, daten=p.zahlen.obs.manipuliert, variables=p.zahlen.obs.manipuliert)
+
+a <- c(1,2,3)
+b <- c(1,2,3,4)
+
+d <- list(a,b)
+sapply(d, mean)
+str(Sets[[1]])
+str(set1)

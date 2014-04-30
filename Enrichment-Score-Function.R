@@ -27,11 +27,6 @@ max_ES <- function(set, variables, daten){   ### WICHTIG: Spalten müssen SNPs s
     stop("Are you realy using p-values? Values don't lie between 0 and 1")
   }
   
-  if((is.matrix(daten) & is.matrix(variables)) ==FALSE){
-    stop("Observed data have to be a Matrix with one row and a column for every SNP; 
-         Permutated data have to be a Matrix with rows=number_of_permutations and
-         a column for every SNP")
-  }
   
   temp <- qnorm(1-variables)            ### z-Scores der p-werte mittels Quantilfunktion der SNV
   namen <- names(variables)[order(temp, decreasing=T)] ### namen der nachfolgend sortierten
@@ -106,7 +101,7 @@ names(Sets) <- unlist(strsplit("set1,set2,set3", ","))
 
 ES <- function(data.obs, data.perm, sets){
   ### Fehler abfangen
-  if(is.null(names(Sets))){
+  if(is.null(names(sets))){
     stop("List which contains the Pathways/Sets should have a name for each element")
   }
   if(is.data.frame(data.obs) | is.matrix(data.obs) != TRUE){      

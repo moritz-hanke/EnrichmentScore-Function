@@ -21,9 +21,16 @@ set3 <- letters[14:20]
 
 max_ES <- function(set, variables, daten){   ### WICHTIG: Spalten müssen SNPs sein, Zeilen die
                                                # beobachteten bzw. permutierten Teststatistiken
+                                             ### Observed data have to be a 1row, m-column matrix
   
   if((max(daten) > 1) | (min(daten) < 0)){
     stop("Are you realy using p-values? Values don't lie between 0 and 1")
+  }
+  
+  if((is.matrix(daten) & is.matrix(variables)) ==FALSE){
+    stop("Observed data have to be a Matrix with one row and a column for every SNP; 
+         Permutated data have to be a Matrix with rows=number_of_permutations and
+         a column for every SNP")
   }
   
   temp <- qnorm(1-variables)            ### z-Scores der p-werte mittels Quantilfunktion der SNV

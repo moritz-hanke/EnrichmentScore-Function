@@ -1,6 +1,6 @@
 # Random p-Werte eines Chi^2-Verteilung erstellen
 set.seed(123)
-p.zahlen.rand <- matrix(pchisq(rchisq(2000, 2,2), df=2, ncp=2), ncol=20, byrow=T)
+p.zahlen.rand <- matrix(pchisq(rchisq(20000, 2,2), df=2, ncp=2), ncol=20, byrow=T)
 set.seed(321)
 p.zahlen.obs <- matrix(pchisq(rchisq(20, 2,2), df=2, ncp=2), ncol=20, byrow=T)
 colnames(p.zahlen.rand) <- letters[1:20]
@@ -50,8 +50,8 @@ max_ES <- function(set, variables, daten){   ### WICHTIG: Spalten müssen SNPs s
   
   ES_all <- Phit - Pmiss
   ES_max <-max(ES_all)
-  ES_max
-  
+  ES_norm <- ES_max/length(set)    # maxES wird mit Groesse des PW normalisiert
+  ES_norm
 }
 
 #var <- zahlen.rand[1,]
@@ -79,7 +79,7 @@ rand1 <- apply(p.zahlen.rand, MARGIN=1, max_ES, set=set1, daten=p.zahlen.rand)
 rand2 <- apply(p.zahlen.rand, MARGIN=1, max_ES, set=set2, daten=p.zahlen.rand)
 rand3 <- apply(p.zahlen.rand, MARGIN=1, max_ES, set=set3, daten=p.zahlen.rand)
 
-plot()
+
 
 
 sum((obs1 < rand1))/length(rand1)    ### alle rand sind gleich lang -> Anzahl Permutationen
@@ -92,8 +92,8 @@ sum((obs.manipuliert3 < rand3)/length(rand3))
 
 ####################
 ### 2DO:
-# - Normierung für Set/PW-Groesse
-# - eine Zusammenfassende Funktion bauen
+# - Normierung für Set/PW-Groesse????
+
 
 Sets <- list(set1,set2,set3)
 names(Sets) <- unlist(strsplit("set1,set2,set3", ","))
@@ -121,6 +121,8 @@ ES <- function(data.obs, data.perm, sets){
   }
   ### Fehler abfangen Ende
   
+  results <- vector(mode="list", length=length(sets))
+  
   maxES.obs <- rep(NA, length(sets))    ### Erstellen von Objekten, die die maxEX der
   names(maxES.obs) <- sets                # beobachteten und permutierten Daten enthalten
                                           # sollen
@@ -139,11 +141,6 @@ ES <- function(data.obs, data.perm, sets){
   }
   )
   
-  #########################################
-  #########################################
-  ### MUss hier noch eine Normierung rein? 
-  #########################################
-  #########################################
   
   nperm <- length(data.perm[,1]) ### wieviele Permutationen gab es? fuer normierten P-Wert
   
@@ -151,11 +148,12 @@ ES <- function(data.obs, data.perm, sets){
                                                            # P-Werts
     (sum(maxES.obs[X] < maxES.perm[,X]))/nperm
   })
-  nom_P  ### Rueckgabe der normierten P-Werte
-  
+  back <- list(nom_P, maxES.obs) ### Rueckgabe der normierten P-Werte
+  names(back) <- c("nominal p-value", "normalized max_ES")
+  back
 }
 
-
-ES(data.obs=p.zahlen.obs, data.perm=p.zahlen.rand, Sets)
-
+system.time(
+ergebnisse <- ES(data.obs=p.zahlen.obs, data.perm=p.zahlen.rand, Sets)
+)
 

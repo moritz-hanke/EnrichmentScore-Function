@@ -101,6 +101,14 @@ names(Sets) <- unlist(strsplit("set1,set2,set3", ","))
 
 ES <- function(data.obs, data.perm, sets){
   ### Fehler abfangen
+  if(any(data.obs==1)){
+    stop("Method is not possible if any p-value is 1 in your observed data (because of rounding); 
+         please change to 0.99999")
+  }
+  if(any(data.perm==1)){
+    stop("Method is not possible if any p-value is 1 in your permutated data (because of 
+         rounding); please change to 0.99999")
+  }
   if(is.null(names(sets))){
     stop("List which contains the Pathways/Sets should have a name for each element")
   }
@@ -121,7 +129,6 @@ ES <- function(data.obs, data.perm, sets){
   }
   ### Fehler abfangen Ende
   
-  results <- vector(mode="list", length=length(sets))
   
   maxES.obs <- rep(NA, length(sets))    ### Erstellen von Objekten, die die maxEX der
   names(maxES.obs) <- sets                # beobachteten und permutierten Daten enthalten

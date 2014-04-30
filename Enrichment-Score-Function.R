@@ -90,11 +90,9 @@ sum((obs.manipuliert1 < rand1)/length(rand1))
 sum((obs.manipuliert2 < rand2)/length(rand2))
 sum((obs.manipuliert3 < rand3)/length(rand3))
 
-####################
-### 2DO:
-# - Normierung für Set/PW-Groesse????
 
-
+### Sets müssen als Liste vorliegen; Namen der Elemente der Liste
+  # sollten PW/Sets entsprechen!
 Sets <- list(set1,set2,set3)
 names(Sets) <- unlist(strsplit("set1,set2,set3", ","))
 
